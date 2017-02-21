@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.djr.fitpopupwindow.utils.FitPopupWindowLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="200dp"
     android:layout_gravity="center"
-    android:background="@drawable/popupwindow_bg"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
 
-        android:gravity="center"
-        >
+        android:gravity="center">
 
         <TextView
             android:layout_width="wrap_content"
@@ -20,9 +17,8 @@
             android:padding="16dp"
             android:text="@string/popup_text"
             android:textColor="@color/color_333"
-            android:textSize="@dimen/text_small"
-            />
+            android:textSize="@dimen/text_small" />
 
 
     </LinearLayout>
-</FrameLayout>
+</com.djr.fitpopupwindow.utils.FitPopupWindowLayout>
