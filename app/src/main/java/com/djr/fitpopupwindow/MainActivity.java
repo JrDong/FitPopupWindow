@@ -4,9 +4,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.djr.fitpopupwindow.utils.DensityUtils;
 import com.djr.fitpopupwindow.utils.FitPopupWindow;
+import com.djr.fitpopupwindow.utils.ScreenUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -41,7 +44,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initPopup(View anchorView) {
         View contentView = mInflater.inflate(R.layout.layout_popupwindow, null);
-        FitPopupWindow fitPopupWindow = new FitPopupWindow(this, contentView);
+        FitPopupWindow fitPopupWindow = new FitPopupWindow(this, contentView,
+                ScreenUtils.getScreenWidth(this) - DensityUtils.dp2px(20),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
         fitPopupWindow.show(anchorView);
     }
 

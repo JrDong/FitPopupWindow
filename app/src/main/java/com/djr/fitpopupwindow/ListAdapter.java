@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.djr.fitpopupwindow.utils.DensityUtils;
 import com.djr.fitpopupwindow.utils.FitPopupWindow;
+import com.djr.fitpopupwindow.utils.ScreenUtils;
 
 import java.util.List;
 
@@ -41,7 +43,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListHolder> {
             public void onClick(View v) {
                 View contentView = LayoutInflater.from(mContext)
                         .inflate(R.layout.layout_popupwindow, null);
-                FitPopupWindow fitPopupWindow = new FitPopupWindow((Activity) mContext, contentView);
+                FitPopupWindow fitPopupWindow = new FitPopupWindow((Activity) mContext, contentView,
+                        ScreenUtils.getScreenWidth(mContext) - DensityUtils.dp2px(20),
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
                 fitPopupWindow.show(v);
             }
         });
