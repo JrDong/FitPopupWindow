@@ -16,36 +16,42 @@ import android.widget.PopupWindow;
 public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismissListener {
 
     private View contentView;
-
+    private View anchorView;
     private Activity context;
 
-    private int mWidth;
+    private int mWindowWidth;
 
     private static final int PADDING = 20;
+    //x轴坐标
+    private int mXCoordinate;
 
+    private int mHorizontal;
+    private int mVertical;
+    private int[] windowPos;
 
-    public FitPopupWindow(Activity context, View contentView) {
-        init(context, contentView, ViewGroup.LayoutParams.WRAP_CONTENT
+    public FitPopupWindow(Activity context, View contentView, View anchorView) {
+        init(context, contentView, anchorView, ViewGroup.LayoutParams.WRAP_CONTENT
                 , ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-    public FitPopupWindow(Activity context, View contentView, int width, int height) {
-        mWidth = width;
-        init(context, contentView, width, height);
+    public FitPopupWindow(Activity context, View contentView, View anchorView, int width, int height) {
+        mWindowWidth = width;
+        init(context, contentView, anchorView, width, height);
     }
 
 
-    public FitPopupWindow(Activity context, int layoutId) {
+    public FitPopupWindow(Activity context, int layoutId, View anchorView) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View contentView = inflater.inflate(layoutId, null);
-        init(context, contentView, ViewGroup.LayoutParams.WRAP_CONTENT
+        init(context, contentView, anchorView, ViewGroup.LayoutParams.WRAP_CONTENT
                 , ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
 
-    private void init(Activity context, View contentView, int width, int height) {
+    private void init(Activity context, View contentView, View anchorView, int width, int height) {
         this.contentView = contentView;
         this.context = context;
+        this.anchorView = anchorView;
         //popupwindow会默认忽略最外层的大小,所以应该再嵌套一层
         setWidth(width);
         setHeight(height);
@@ -54,10 +60,12 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         setOutsideTouchable(true);
         setFocusable(true);
         setOnDismissListener(this);
+        windowPos = calculatePopWindowPos(anchorView, contentView);
+
     }
 
-    public void show(View anchorView) {
-        int windowPos[] = calculatePopWindowPos(anchorView, contentView);
+
+    public void show() {
 
         showAtLocation(anchorView, Gravity.TOP | Gravity.END
                 , windowPos[0], windowPos[1]);
@@ -65,7 +73,6 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         WindowManager.LayoutParams lp = context.getWindow().getAttributes();
         lp.alpha = 0.7f;
         context.getWindow().setAttributes(lp);
-
     }
 
     /**
@@ -80,25 +87,29 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         anchorView.getLocationOnScreen(anchorLoc);
         final int anchorHeight = anchorView.getHeight();
         final int anchorWidth = anchorView.getWidth();
+        mXCoordinate = anchorLoc[0];
         // 获取屏幕的高宽
         final int screenHeight = ScreenUtils.getScreenHeight(anchorView.getContext());
         final int screenWidth = ScreenUtils.getScreenWidth(anchorView.getContext());
         contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         // 计算contentView的高宽
         int windowHeight = contentView.getMeasuredHeight();
-        int windowWidth = mWidth > 0 ? mWidth : contentView.getMeasuredWidth();
+        mWindowWidth = mWindowWidth > 0 ? mWindowWidth : contentView.getMeasuredWidth();
 
         // 判断需要向上弹出还是向下弹出,如果要改变弹出策略,改变此处即可
         // 目前是根据屏幕的一半进行判断
         final boolean isNeedShowUp = (screenHeight - anchorLoc[1] - anchorHeight < screenHeight / 2);
 
         // 判断需要向左弹出还是向右弹出
-//        final boolean isNeedShowLeft = (anchorLoc[0] > windowWidth);
+        final boolean isNeedShowLeft = (anchorLoc[0] < mWindowWidth / 2);
+
+        setHorizontal(isNeedShowLeft ? FitPopupWindowLayout.LEFT : FitPopupWindowLayout.RIGHT);
+        setVertical(isNeedShowUp ? FitPopupWindowLayout.UP : FitPopupWindowLayout.DOWN);
 
 //        windowPos[0] = isNeedShowLeft ?
 //                anchorLoc[0] - windowWidth : anchorLoc[0] + anchorWidth;
 
-        windowPos[0] = (screenWidth - windowWidth) / 2;
+        windowPos[0] = (screenWidth - mWindowWidth) / 2;
 
         windowPos[1] = isNeedShowUp ?
                 anchorLoc[1] - windowHeight - PADDING : anchorLoc[1] + anchorHeight + PADDING;
@@ -106,10 +117,40 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         return windowPos;
     }
 
+
     @Override
     public void onDismiss() {
         WindowManager.LayoutParams lp = context.getWindow().getAttributes();
         lp.alpha = 1f;
         context.getWindow().setAttributes(lp);
+    }
+
+    public int getXCoordinate() {
+        if (mXCoordinate > mWindowWidth / 2) {
+            mXCoordinate = mWindowWidth - mXCoordinate - anchorView.getWidth() + 20;
+        }
+        return mXCoordinate;
+    }
+
+    public int getHorizontal() {
+        return mHorizontal;
+    }
+
+    /**
+     * @param mHorizontal 设置水平方向
+     */
+    private void setHorizontal(int mHorizontal) {
+        this.mHorizontal = mHorizontal;
+    }
+
+    public int getVertical() {
+        return mVertical;
+    }
+
+    /**
+     * @param mVertical 设置竖直方向
+     */
+    private void setVertical(int mVertical) {
+        this.mVertical = mVertical;
     }
 }

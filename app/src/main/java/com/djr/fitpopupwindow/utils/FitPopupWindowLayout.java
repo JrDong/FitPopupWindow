@@ -1,19 +1,18 @@
 package com.djr.fitpopupwindow.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.support.v7.widget.ActionBarContextView;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-
-import com.djr.fitpopupwindow.R;
 
 /**
  * Created by DongJr on 2017/2/21.
+ * <p>
+ * 气泡
  */
 
 public class FitPopupWindowLayout extends RelativeLayout {
@@ -27,8 +26,17 @@ public class FitPopupWindowLayout extends RelativeLayout {
     private int mVertical = DOWN;
 
 
-    private View contentView;
-    private SharpCornerView mSharpView;
+    Paint mPaint;
+    private static final int mSharpWidth = 50;
+    private static final int mSharpHeight = (int) (mSharpWidth * 1.5);
+    private static final int RECT_CORNER = 20;
+
+    private int mXoffset = 20;
+
+    private Path mPath = new Path();
+    private Path mSharpPath = new Path();
+//    private Matrix matrix = new Matrix();
+
 
     public FitPopupWindowLayout(Context context) {
         this(context, null);
@@ -42,55 +50,74 @@ public class FitPopupWindowLayout extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         setBackgroundColor(Color.TRANSPARENT);
 
+        mPaint = new Paint();
+        mPaint.setColor(Color.WHITE);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setAntiAlias(true);
 
-        setOrientation(UP, LEFT);
     }
 
-    public void setOrientation(int horizontal, int vertical) {
-        mHorizontal = horizontal;
-        mVertical = vertical;
-        initSharp();
-        initBackGround();
-        invalidate();
+//    private Matrix makePathMatrix() {
+//        if (mHorizontal == LEFT && mVertical == UP) {
+//            matrix.postScale(1, 1);
+//        } else if (mHorizontal == LEFT && mVertical == DOWN) {
+//            matrix.postScale(1, -1);
+//            matrix.postTranslate(0, mVertical);
+//        } else if (mHorizontal == RIGHT && mVertical == UP) {
+//            matrix.postScale(-1, 1);
+//
+//        } else if (mHorizontal == RIGHT && mVertical == DOWN) {
+//            matrix.postScale(-1, -1);
+//        }
+//        return matrix;
+//    }
+
+    private Path makeSharpPath() {
+        mSharpPath.moveTo(mXoffset, getMeasuredHeight() - mSharpHeight);
+        mSharpPath.cubicTo(mXoffset, getMeasuredHeight(), mXoffset, getMeasuredHeight() - mSharpHeight,
+                mSharpWidth + mXoffset, getMeasuredHeight() - mSharpHeight);
+        return mSharpPath;
     }
 
-    private void initBackGround() {
-        contentView = new View(getContext());
-        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
-                , DensityUtils.dp2px(80));
-        if (mVertical == UP) {
-            params.bottomMargin = mSharpView.getMeasuredHeight();
-        } else {
-            params.topMargin = mSharpView.getMeasuredHeight();
-        }
-        contentView.setLayoutParams(params);
-        addView(contentView);
-    }
+    @Override
+    protected void onDraw(Canvas canvas) {
 
-    private void initSharp() {
-        mSharpView = new SharpCornerView(getContext());
-        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT
-                , ViewGroup.LayoutParams.WRAP_CONTENT);
+        mPath.addRoundRect(new RectF(0, 0, getMeasuredWidth(), getMeasuredHeight() - mSharpHeight)
+                , RECT_CORNER, RECT_CORNER, Path.Direction.CW);
+        mPath.addPath(makeSharpPath());
+        canvas.drawPath(mPath, mPaint);
 
         if (mHorizontal == LEFT && mVertical == UP) {
-            mSharpView.setOrientation(SharpCornerView.UP_LEFT);
-            params.addRule(ABOVE);
-            params.addRule(LEFT);
+            setScaleX(1);
+            setScaleY(1);
         } else if (mHorizontal == LEFT && mVertical == DOWN) {
-            mSharpView.setOrientation(SharpCornerView.DOWN_LEFT);
-            params.addRule(BELOW);
+            setScaleX(1);
+            setScaleY(-1);
+            scaleChild(1, -1);
         } else if (mHorizontal == RIGHT && mVertical == UP) {
-            params.addRule(ABOVE);
-            mSharpView.setOrientation(SharpCornerView.UP_RIGHT);
+            setScaleX(-1);
+            setScaleY(1);
+            scaleChild(-1, 1);
         } else if (mHorizontal == RIGHT && mVertical == DOWN) {
-            mSharpView.setOrientation(SharpCornerView.DOWN_RIGHT);
-            params.addRule(BELOW);
-
+            setScaleX(-1);
+            setScaleY(-1);
+            scaleChild(-1, -1);
         }
-        mSharpView.setLayoutParams(params);
 
-        addView(mSharpView);
     }
 
+    private void scaleChild(float scaleX, float scaleY) {
+        for (int i = 0; i < getChildCount(); i++) {
+            getChildAt(i).setScaleX(scaleX);
+            getChildAt(i).setScaleY(scaleY);
+        }
+    }
+
+    public void setOrientation(int horizontal, int vertical, int xOffset) {
+        mHorizontal = horizontal;
+        mVertical = vertical;
+        mXoffset = xOffset + 20;
+        invalidate();
+    }
 
 }
