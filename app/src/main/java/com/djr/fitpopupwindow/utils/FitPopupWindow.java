@@ -6,9 +6,17 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.CycleInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+
+import com.djr.fitpopupwindow.R;
 
 /**
  * Created by DongJr on 2017/2/21.
@@ -29,6 +37,7 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
     private int mHorizontal;
     private int mVertical;
     private int[] windowPos;
+    private FitPopupWindowLayout mFitPopupWindowLayout;
 
     public FitPopupWindow(Activity context) {
         init(context, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -59,22 +68,23 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         setFocusable(true);
         setOnDismissListener(this);
 
+        setAnimationStyle(R.style.popop_anim);
     }
 
     public void setView(View contentView, View anchorView) {
         this.anchorView = anchorView;
         windowPos = calculatePopWindowPos(anchorView, contentView);
 
-        FitPopupWindowLayout fitPopupWindowLayout = new FitPopupWindowLayout(context);
+        mFitPopupWindowLayout = new FitPopupWindowLayout(context);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, getHeight() - FitPopupWindowLayout.mSharpHeight);
         layoutParams.bottomMargin = FitPopupWindowLayout.mSharpHeight;
 
         contentView.setLayoutParams(layoutParams);
-        fitPopupWindowLayout.setOrientation(getHorizontal(), getVertical()
+        mFitPopupWindowLayout.setOrientation(getHorizontal(), getVertical()
                 , getXCoordinate());
-        fitPopupWindowLayout.addView(contentView);
-        setContentView(fitPopupWindowLayout);
+        mFitPopupWindowLayout.addView(contentView);
+        setContentView(mFitPopupWindowLayout);
     }
 
 
@@ -82,10 +92,26 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
 
         showAtLocation(anchorView, Gravity.TOP | Gravity.END
                 , windowPos[0], windowPos[1]);
-
-        WindowManager.LayoutParams lp = context.getWindow().getAttributes();
+        update();
+        Window window = context.getWindow();
+        WindowManager.LayoutParams lp = window.getAttributes();
         lp.alpha = 0.7f;
-        context.getWindow().setAttributes(lp);
+        window.setAttributes(lp);
+//        startAnimation(true);
+
+    }
+
+    private void startAnimation(boolean isStart) {
+        ScaleAnimation animation;
+        if (isStart) {
+            animation = new ScaleAnimation(0, 1, 0, 1, mXCoordinate, 0);
+        } else {
+            animation = new ScaleAnimation(1, 0, 1, 0, mXCoordinate, 0);
+        }
+        animation.setDuration(200);
+        animation.setInterpolator(new OvershootInterpolator());
+        animation.setFillAfter(true);
+        mFitPopupWindowLayout.startAnimation(animation);
     }
 
     /**
@@ -131,17 +157,23 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         return windowPos;
     }
 
+    @Override
+    public void dismiss() {
+        super.dismiss();
+    }
 
     @Override
     public void onDismiss() {
+        startAnimation(false);
         WindowManager.LayoutParams lp = context.getWindow().getAttributes();
         lp.alpha = 1f;
         context.getWindow().setAttributes(lp);
+
     }
 
     public int getXCoordinate() {
         if (mXCoordinate > mWindowWidth / 2) {
-            mXCoordinate = mWindowWidth - mXCoordinate - anchorView.getWidth() + 20;
+            mXCoordinate = mWindowWidth - mXCoordinate - anchorView.getWidth() + 50;
         }
         return mXCoordinate;
     }

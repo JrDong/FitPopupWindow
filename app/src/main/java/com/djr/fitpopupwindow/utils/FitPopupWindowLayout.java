@@ -66,7 +66,6 @@ public class FitPopupWindowLayout extends RelativeLayout {
     }
 
 
-
     @Override
     protected void onDraw(Canvas canvas) {
 
@@ -104,7 +103,7 @@ public class FitPopupWindowLayout extends RelativeLayout {
     public void setOrientation(int horizontal, int vertical, int xOffset) {
         mHorizontal = horizontal;
         mVertical = vertical;
-        mXoffset = xOffset + 20;
+        mXoffset = xOffset;
         invalidate();
     }
 
