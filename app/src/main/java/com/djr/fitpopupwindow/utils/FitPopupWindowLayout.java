@@ -26,9 +26,9 @@ public class FitPopupWindowLayout extends RelativeLayout {
     private int mVertical = DOWN;
 
 
-    Paint mPaint;
-    private static final int mSharpWidth = 50;
-    private static final int mSharpHeight = (int) (mSharpWidth * 1.5);
+    private Paint mPaint;
+    public static final int mSharpWidth = 50;
+    public static final int mSharpHeight = (int) (mSharpWidth * 1.0f);
     private static final int RECT_CORNER = 20;
 
     private int mXoffset = 20;
@@ -57,20 +57,6 @@ public class FitPopupWindowLayout extends RelativeLayout {
 
     }
 
-//    private Matrix makePathMatrix() {
-//        if (mHorizontal == LEFT && mVertical == UP) {
-//            matrix.postScale(1, 1);
-//        } else if (mHorizontal == LEFT && mVertical == DOWN) {
-//            matrix.postScale(1, -1);
-//            matrix.postTranslate(0, mVertical);
-//        } else if (mHorizontal == RIGHT && mVertical == UP) {
-//            matrix.postScale(-1, 1);
-//
-//        } else if (mHorizontal == RIGHT && mVertical == DOWN) {
-//            matrix.postScale(-1, -1);
-//        }
-//        return matrix;
-//    }
 
     private Path makeSharpPath() {
         mSharpPath.moveTo(mXoffset, getMeasuredHeight() - mSharpHeight);
@@ -78,6 +64,8 @@ public class FitPopupWindowLayout extends RelativeLayout {
                 mSharpWidth + mXoffset, getMeasuredHeight() - mSharpHeight);
         return mSharpPath;
     }
+
+
 
     @Override
     protected void onDraw(Canvas canvas) {

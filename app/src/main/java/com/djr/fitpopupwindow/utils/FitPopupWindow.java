@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 
 /**
  * Created by DongJr on 2017/2/21.
@@ -21,7 +22,7 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
 
     private int mWindowWidth;
 
-    private static final int PADDING = 20;
+    private static final int PADDING = 0;
     //x轴坐标
     private int mXCoordinate;
 
@@ -29,39 +30,51 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
     private int mVertical;
     private int[] windowPos;
 
-    public FitPopupWindow(Activity context, View contentView, View anchorView) {
-        init(context, contentView, anchorView, ViewGroup.LayoutParams.WRAP_CONTENT
+    public FitPopupWindow(Activity context) {
+        init(context, ViewGroup.LayoutParams.WRAP_CONTENT
                 , ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-    public FitPopupWindow(Activity context, View contentView, View anchorView, int width, int height) {
+    public FitPopupWindow(Activity context, int width, int height) {
         mWindowWidth = width;
-        init(context, contentView, anchorView, width, height);
+        init(context, width, height);
     }
 
 
     public FitPopupWindow(Activity context, int layoutId, View anchorView) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View contentView = inflater.inflate(layoutId, null);
-        init(context, contentView, anchorView, ViewGroup.LayoutParams.WRAP_CONTENT
+        init(context, ViewGroup.LayoutParams.WRAP_CONTENT
                 , ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
 
-    private void init(Activity context, View contentView, View anchorView, int width, int height) {
-        this.contentView = contentView;
+    private void init(Activity context, int width, int height) {
         this.context = context;
-        this.anchorView = anchorView;
         //popupwindow会默认忽略最外层的大小,所以应该再嵌套一层
         setWidth(width);
         setHeight(height);
-        setContentView(contentView);
         setBackgroundDrawable(new ColorDrawable(0x00000000));
         setOutsideTouchable(true);
         setFocusable(true);
         setOnDismissListener(this);
+
+    }
+
+    public void setView(View contentView, View anchorView) {
+        this.anchorView = anchorView;
         windowPos = calculatePopWindowPos(anchorView, contentView);
 
+        FitPopupWindowLayout fitPopupWindowLayout = new FitPopupWindowLayout(context);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, getHeight() - FitPopupWindowLayout.mSharpHeight);
+        layoutParams.bottomMargin = FitPopupWindowLayout.mSharpHeight;
+
+        contentView.setLayoutParams(layoutParams);
+        fitPopupWindowLayout.setOrientation(getHorizontal(), getVertical()
+                , getXCoordinate());
+        fitPopupWindowLayout.addView(contentView);
+        setContentView(fitPopupWindowLayout);
     }
 
 
@@ -112,7 +125,8 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         windowPos[0] = (screenWidth - mWindowWidth) / 2;
 
         windowPos[1] = isNeedShowUp ?
-                anchorLoc[1] - windowHeight - PADDING : anchorLoc[1] + anchorHeight + PADDING;
+                anchorLoc[1] - windowHeight - PADDING - FitPopupWindowLayout.mSharpHeight
+                : anchorLoc[1] + anchorHeight + PADDING;
 
         return windowPos;
     }
