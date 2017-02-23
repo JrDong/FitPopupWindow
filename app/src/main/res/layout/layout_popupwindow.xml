@@ -3,18 +3,19 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="match_parent"
     android:layout_centerInParent="true"
     android:orientation="vertical"
     >
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="10dp"
+        android:paddingTop="8dp"
         android:text="可选理由，精准屏蔽"
         android:textColor="@color/color_333"
         android:textSize="@dimen/text_small"/>
@@ -23,51 +24,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
+
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
+            style="@style/text_popup_not_interest"
             android:text="重复、旧闻"
-            android:background="@drawable/selector_popupwindow_text"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:padding="10dp"
             />
+
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
+            style="@style/text_popup_not_interest"
             android:text="内容质量差"
-            android:background="@drawable/selector_popupwindow_text"
-            android:layout_margin="10dp"
-            android:padding="10dp"
-            android:gravity="center"
+
             />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
+        android:paddingBottom="12dp"
         >
+
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
+            style="@style/text_popup_not_interest"
+
             android:text="娱乐"
-            android:background="@drawable/selector_popupwindow_text"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:padding="10dp"
             />
+
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
+            style="@style/text_popup_not_interest"
+
             android:text="来源"
-            android:background="@drawable/selector_popupwindow_text"
-            android:layout_margin="10dp"
-            android:padding="10dp"
-            android:gravity="center"
             />
     </LinearLayout>
 </LinearLayout>

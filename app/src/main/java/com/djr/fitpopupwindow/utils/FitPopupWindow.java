@@ -2,16 +2,16 @@ package com.djr.fitpopupwindow.utils;
 
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.CycleInterpolator;
-import android.view.animation.OvershootInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -24,7 +24,6 @@ import com.djr.fitpopupwindow.R;
 
 public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismissListener {
 
-    private View contentView;
     private View anchorView;
     private Activity context;
 
@@ -68,7 +67,7 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         setFocusable(true);
         setOnDismissListener(this);
 
-        setAnimationStyle(R.style.popop_anim);
+        setAnimationStyle(R.style.popp_anim);
     }
 
     public void setView(View contentView, View anchorView) {
@@ -89,7 +88,6 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
 
 
     public void show() {
-
         showAtLocation(anchorView, Gravity.TOP | Gravity.END
                 , windowPos[0], windowPos[1]);
         update();
@@ -97,22 +95,9 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.alpha = 0.7f;
         window.setAttributes(lp);
-//        startAnimation(true);
 
     }
 
-    private void startAnimation(boolean isStart) {
-        ScaleAnimation animation;
-        if (isStart) {
-            animation = new ScaleAnimation(0, 1, 0, 1, mXCoordinate, 0);
-        } else {
-            animation = new ScaleAnimation(1, 0, 1, 0, mXCoordinate, 0);
-        }
-        animation.setDuration(200);
-        animation.setInterpolator(new OvershootInterpolator());
-        animation.setFillAfter(true);
-        mFitPopupWindowLayout.startAnimation(animation);
-    }
 
     /**
      * @param anchorView  弹出window的view
@@ -164,7 +149,6 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
 
     @Override
     public void onDismiss() {
-        startAnimation(false);
         WindowManager.LayoutParams lp = context.getWindow().getAttributes();
         lp.alpha = 1f;
         context.getWindow().setAttributes(lp);
@@ -178,7 +162,7 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         return mXCoordinate;
     }
 
-    public int getHorizontal() {
+    private int getHorizontal() {
         return mHorizontal;
     }
 
@@ -189,7 +173,7 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         this.mHorizontal = mHorizontal;
     }
 
-    public int getVertical() {
+    private int getVertical() {
         return mVertical;
     }
 
@@ -198,5 +182,27 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
      */
     private void setVertical(int mVertical) {
         this.mVertical = mVertical;
+    }
+
+
+    private void startAnimation(boolean isStart) {
+        AnimationSet animationSet = new AnimationSet(true);
+
+        ScaleAnimation sa;
+        sa = new ScaleAnimation(0, 1f, 0, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        sa.setDuration(150);
+        sa.setInterpolator(new FastOutSlowInInterpolator());
+        sa.setFillAfter(true);
+
+        AlphaAnimation aa = new AlphaAnimation(0f, 1f);
+        aa.setDuration(150);
+        aa.setFillAfter(true);
+
+        animationSet.addAnimation(sa);
+        animationSet.addAnimation(aa);
+
+        mFitPopupWindowLayout.startAnimation(animationSet);
+
     }
 }
