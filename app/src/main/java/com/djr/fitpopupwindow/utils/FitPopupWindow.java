@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -49,14 +48,6 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
     }
 
 
-    public FitPopupWindow(Activity context, int layoutId, View anchorView) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View contentView = inflater.inflate(layoutId, null);
-        init(context, ViewGroup.LayoutParams.WRAP_CONTENT
-                , ViewGroup.LayoutParams.WRAP_CONTENT);
-    }
-
-
     private void init(Activity context, int width, int height) {
         this.context = context;
         //popupwindow会默认忽略最外层的大小,所以应该再嵌套一层
@@ -76,8 +67,8 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
 
         mFitPopupWindowLayout = new FitPopupWindowLayout(context);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, getHeight() - FitPopupWindowLayout.mSharpHeight);
-        layoutParams.bottomMargin = FitPopupWindowLayout.mSharpHeight;
+                ViewGroup.LayoutParams.MATCH_PARENT, getHeight() - FitPopupWindowLayout.SHARP_HEIGHT);
+        layoutParams.bottomMargin = FitPopupWindowLayout.SHARP_HEIGHT;
 
         contentView.setLayoutParams(layoutParams);
         mFitPopupWindowLayout.setOrientation(getHorizontal(), getVertical()
@@ -136,7 +127,7 @@ public class FitPopupWindow extends PopupWindow implements PopupWindow.OnDismiss
         windowPos[0] = (screenWidth - mWindowWidth) / 2;
 
         windowPos[1] = isNeedShowUp ?
-                anchorLoc[1] - windowHeight - PADDING - FitPopupWindowLayout.mSharpHeight
+                anchorLoc[1] - windowHeight - PADDING - FitPopupWindowLayout.SHARP_HEIGHT
                 : anchorLoc[1] + anchorHeight + PADDING;
 
         return windowPos;

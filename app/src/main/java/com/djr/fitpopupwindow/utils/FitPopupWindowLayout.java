@@ -27,15 +27,14 @@ public class FitPopupWindowLayout extends RelativeLayout {
 
 
     private Paint mPaint;
-    public static final int mSharpWidth = 50;
-    public static final int mSharpHeight = (int) (mSharpWidth * 1.0f);
+    public static final int SHARP_WIDTH = 50;
+    public static final int SHARP_HEIGHT = (int) (SHARP_WIDTH * 1.0f);
     private static final int RECT_CORNER = 20;
 
     private int mXoffset = 20;
 
     private Path mPath = new Path();
     private Path mSharpPath = new Path();
-//    private Matrix matrix = new Matrix();
 
 
     public FitPopupWindowLayout(Context context) {
@@ -59,9 +58,9 @@ public class FitPopupWindowLayout extends RelativeLayout {
 
 
     private Path makeSharpPath() {
-        mSharpPath.moveTo(mXoffset, getMeasuredHeight() - mSharpHeight);
-        mSharpPath.cubicTo(mXoffset, getMeasuredHeight(), mXoffset, getMeasuredHeight() - mSharpHeight,
-                mSharpWidth + mXoffset, getMeasuredHeight() - mSharpHeight);
+        mSharpPath.moveTo(mXoffset, getMeasuredHeight() - SHARP_HEIGHT);
+        mSharpPath.cubicTo(mXoffset, getMeasuredHeight(), mXoffset, getMeasuredHeight() - SHARP_HEIGHT,
+                SHARP_WIDTH + mXoffset, getMeasuredHeight() - SHARP_HEIGHT);
         return mSharpPath;
     }
 
@@ -69,7 +68,7 @@ public class FitPopupWindowLayout extends RelativeLayout {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        mPath.addRoundRect(new RectF(0, 0, getMeasuredWidth(), getMeasuredHeight() - mSharpHeight)
+        mPath.addRoundRect(new RectF(0, 0, getMeasuredWidth(), getMeasuredHeight() - SHARP_HEIGHT)
                 , RECT_CORNER, RECT_CORNER, Path.Direction.CW);
         mPath.addPath(makeSharpPath());
         canvas.drawPath(mPath, mPaint);
