@@ -6,10 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.djr.fitpopupwindow.utils.DensityUtils;
-import com.djr.fitpopupwindow.utils.FitPopupWindow;
-import com.djr.fitpopupwindow.utils.ScreenUtils;
+import com.djr.fitpopupwindow.utils.FitPopupUtil;
 
 import java.util.List;
 
@@ -41,14 +40,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListHolder> {
         holder.ivRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View contentView = LayoutInflater.from(mContext)
-                        .inflate(R.layout.layout_popupwindow, null);
-                FitPopupWindow fitPopupWindow = new FitPopupWindow((Activity) mContext,
-                        ScreenUtils.getScreenWidth(mContext) - DensityUtils.dp2px(20),
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                );
-                fitPopupWindow.setView(contentView, v);
-                fitPopupWindow.show();
+                FitPopupUtil fitPopupUtil = new FitPopupUtil((Activity) mContext);
+                fitPopupUtil.setOnClickListener(new FitPopupUtil.OnCommitClickListener() {
+                    @Override
+                    public void onClick(String reason) {
+                        Toast.makeText(mContext,reason,Toast.LENGTH_SHORT).show();
+                    }
+                });
+                fitPopupUtil.showPopup(v);
             }
         });
     }

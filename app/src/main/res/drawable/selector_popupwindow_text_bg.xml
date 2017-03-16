@@ -3,15 +3,25 @@
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
             <corners android:radius="5dp"/>
-            <stroke android:width="1dp" android:color="@color/color_red"/>
+            <stroke android:width="1dp" android:color="@color/c_ff9900"/>
 
-            <solid android:color="@color/color_transparent"/>
+            <solid android:color="@color/c_ff9900"/>
         </shape>
     </item>
-    <item android:state_pressed="false">
+
+    <item android:state_selected="true">
         <shape android:shape="rectangle">
             <corners android:radius="5dp"/>
-            <stroke android:width="1dp" android:color="@color/color_line"/>
+            <stroke android:width="1dp" android:color="@color/c_ff9900"/>
+
+            <solid android:color="@color/c_ff9900"/>
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="5dp"/>
+            <stroke android:width="1dp" android:color="#dddddd"/>
             <solid android:color="@color/color_transparent"/>
         </shape>
     </item>

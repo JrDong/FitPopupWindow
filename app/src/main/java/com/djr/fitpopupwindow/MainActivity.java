@@ -4,12 +4,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.djr.fitpopupwindow.utils.DensityUtils;
-import com.djr.fitpopupwindow.utils.FitPopupWindow;
-import com.djr.fitpopupwindow.utils.ScreenUtils;
+import com.djr.fitpopupwindow.utils.FitPopupUtil;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -45,13 +43,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void initPopup(View anchorView) {
-        View contentView = mInflater.inflate(R.layout.layout_popupwindow, null);
-        FitPopupWindow fitPopupWindow = new FitPopupWindow(this,
-                ScreenUtils.getScreenWidth(this) - DensityUtils.dp2px(20),
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        fitPopupWindow.setView(contentView, anchorView);
-        fitPopupWindow.show();
+        FitPopupUtil fitPopupUtil = new FitPopupUtil(this);
+        fitPopupUtil.setOnClickListener(new FitPopupUtil.OnCommitClickListener() {
+            @Override
+            public void onClick(String reason) {
+                Toast.makeText(MainActivity.this,reason,Toast.LENGTH_SHORT).show();
+            }
+        });
+        fitPopupUtil.showPopup(anchorView);
     }
 
 
